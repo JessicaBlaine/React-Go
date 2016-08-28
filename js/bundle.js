@@ -49,13 +49,26 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(34);
 	
+	var Board = __webpack_require__(174);
+	
+	var Go = window.Go = __webpack_require__(173);
+	
+	var App = React.createClass({
+	  displayName: "App",
+	  render: function render() {
+	    return React.createElement(
+	      "div",
+	      null,
+	      React.createElement(Board, null)
+	    );
+	  }
+	});
+	
+	module.exports = App;
+	
 	document.addEventListener("DOMContentLoaded", function () {
 	  var rootEl = document.getElementById('root');
-	  ReactDOM.render(React.createElement(
-	    "span",
-	    null,
-	    "test"
-	  ), rootEl);
+	  ReactDOM.render(React.createElement(App, null), rootEl);
 	});
 
 /***/ },
@@ -21408,6 +21421,166 @@
 	
 	module.exports = ReactDOMNullInputValuePropHook;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 172 */,
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Tile = __webpack_require__(176);
+	
+	var Go = function Go() {
+	  this.bottomLeft = this.generateBoard(13);
+	};
+	
+	Go.prototype.generateBoard = function (size) {
+	  var lastRow = [];
+	  for (var i = 0; i < size; i++) {
+	    var row = [];
+	    for (var j = 0; j < size; j++) {
+	      var tile = new Tile();
+	      if (row[row.length - 1]) {
+	        var t2 = row[row.length - 1];
+	        tile.left = t2;
+	        t2.right = tile;
+	      }
+	      if (lastRow[j]) {
+	        var _t = lastRow[j];
+	        tile.up = _t;
+	        _t.down = tile;
+	      }
+	      row.push(tile);
+	    }
+	    lastRow = row;
+	  }
+	  return lastRow[0];
+	};
+	
+	module.exports = Go;
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	
+	// const Go = require('./game/go');
+	
+	var Board = React.createClass({
+	  displayName: 'Board',
+	
+	  getInitialState: function getInitialState() {
+	    return {
+	      tiles: []
+	    };
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'span',
+	        null,
+	        'test'
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = Board;
+
+/***/ },
+/* 175 */,
+/* 176 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	var Tile = function Tile() {
+	  this.owner = null;
+	  this.up = null;
+	  this.right = null;
+	  this.down = null;
+	  this.left = null;
+	};
+	
+	Tile.prototype.neighbors = function () {
+	  return [this.up, this.right, this.down, this.left].filter(function (tile) {
+	    return tile !== null;
+	  });
+	};
+	
+	Tile.prototype.friends = function () {
+	  var _this = this;
+	
+	  return this.neighbors().filter(function (t) {
+	    return t.owner === _this.owner;
+	  });
+	};
+	
+	Tile.prototype.enemies = function () {
+	  var _this2 = this;
+	
+	  return this.neighbors().filter(function (t) {
+	    return t.owner !== _this2.owner && t.owner !== null;
+	  });
+	};
+	
+	Tile.prototype.validMove = function (color) {
+	  return this.owner === null && this.neighbors().some(function (t) {
+	    return t.owner === null || t.owner === color;
+	  });
+	};
+	
+	Tile.prototype.makeMove = function (color) {
+	  if (this.validMove(color)) {
+	    this.owner = color;
+	
+	    this.enemies().forEach(function (tile) {
+	      var tiles = new Set();
+	      if (!tile.update(tiles)) {
+	        tiles.forEach(function (t) {
+	          t.owner = null;
+	        });
+	      }
+	    });
+	    this.friends().forEach(function (tile) {
+	      var tiles = new Set();
+	      if (!tile.update(tiles)) {
+	        tiles.forEach(function (t) {
+	          t.owner = null;
+	        });
+	      }
+	    });
+	    return true;
+	  } else {
+	    return false;
+	  }
+	};
+	
+	Tile.prototype.update = function (visited) {
+	  debugger;
+	  visited.add(this);
+	  if (this.neighbors().some(function (t) {
+	    return t.owner === null;
+	  })) {
+	    return true;
+	  } else {
+	    return this.friends().some(function (t) {
+	      if (!visited.has(t)) {
+	        return t.update(visited);
+	      } else {
+	        return false;
+	      }
+	    });
+	  }
+	};
+	
+	module.exports = Tile;
 
 /***/ }
 /******/ ]);
