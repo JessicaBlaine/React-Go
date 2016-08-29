@@ -21540,14 +21540,13 @@
 	};
 	
 	Tile.prototype.validMove = function (color) {
-	  return this.owner === null && this.neighbors().some(function (t) {
-	    return t.owner === null || t.owner === color;
-	  });
+	  return this.owner === null; // && this.neighbors().some(t => {
+	  // return t.owner === null || t.owner === color;
+	  //});
 	};
 	
 	Tile.prototype.makeMove = function (color) {
 	  if (this.validMove(color)) {
-	    console.log("making move");
 	    this.owner = color;
 	
 	    this.enemies().forEach(function (tile) {
@@ -21558,14 +21557,12 @@
 	        });
 	      }
 	    });
-	    this.friends().forEach(function (tile) {
-	      var tiles = new Set();
-	      if (!tile.update(tiles)) {
-	        tiles.forEach(function (t) {
-	          t.owner = null;
-	        });
-	      }
-	    });
+	    var tiles = new Set();
+	    if (!this.update(tiles)) {
+	      tiles.forEach(function (t) {
+	        t.owner = null;
+	      });
+	    }
 	    return true;
 	  } else {
 	    return false;

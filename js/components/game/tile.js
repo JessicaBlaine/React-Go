@@ -21,14 +21,13 @@ Tile.prototype.enemies = function () {
 };
 
 Tile.prototype.validMove = function (color) {
-  return this.owner === null && this.neighbors().some(t => {
-    return t.owner === null || t.owner === color;
-  });
+  return this.owner === null; // && this.neighbors().some(t => {
+    // return t.owner === null || t.owner === color;
+  //});
 };
 
 Tile.prototype.makeMove = function (color) {
   if (this.validMove(color)) {
-    console.log("making move");
     this.owner = color;
 
     this.enemies().forEach(tile => {
@@ -37,12 +36,10 @@ Tile.prototype.makeMove = function (color) {
         tiles.forEach(t => { t.owner = null; } );
       }
     });
-    this.friends().forEach(tile => {
-      let tiles = new Set();
-      if (!tile.update(tiles)) {
-        tiles.forEach(t => { t.owner = null; } );
-      }
-    });
+    let tiles = new Set();
+    if (!this.update(tiles)) {
+      tiles.forEach(t => { t.owner = null; } );
+    }
     return true;
   }
   else {
