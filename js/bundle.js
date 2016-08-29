@@ -49,7 +49,7 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(34);
 	
-	var Board = __webpack_require__(174);
+	var Board = __webpack_require__(172);
 	
 	var Go = window.Go = __webpack_require__(173);
 	
@@ -21423,13 +21423,56 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 172 */,
+/* 172 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	
+	var Tile = __webpack_require__(175);
+	
+	var Go = __webpack_require__(173);
+	
+	var Board = React.createClass({
+	  displayName: 'Board',
+	
+	  getInitialState: function getInitialState() {
+	    return {
+	      goGame: new Go(),
+	      currentPlayer: "black"
+	    };
+	  },
+	  handleClick: function handleClick(tile, event) {
+	    var player = this.state.currentPlayer;
+	    if (tile.makeMove(player)) {
+	      this.setState({ currentPlayer: player === "white" ? "black" : "white" });
+	    }
+	  },
+	  render: function render() {
+	    var visited = new Set();
+	    return React.createElement(
+	      'div',
+	      { className: "board " + this.state.currentPlayer },
+	      React.createElement(Tile, {
+	        handleClick: this.handleClick,
+	        tile: this.state.goGame.bottomLeft,
+	        visited: visited,
+	        xPos: 0,
+	        yPos: 0 })
+	    );
+	  }
+	});
+	
+	module.exports = Board;
+
+/***/ },
 /* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Tile = __webpack_require__(176);
+	var Tile = __webpack_require__(174);
 	
 	var Go = function Go() {
 	  this.bottomLeft = this.generateBoard(13);
@@ -21462,40 +21505,6 @@
 
 /***/ },
 /* 174 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	
-	// const Go = require('./game/go');
-	
-	var Board = React.createClass({
-	  displayName: 'Board',
-	
-	  getInitialState: function getInitialState() {
-	    return {
-	      tiles: []
-	    };
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'span',
-	        null,
-	        'test'
-	      )
-	    );
-	  }
-	});
-	
-	module.exports = Board;
-
-/***/ },
-/* 175 */,
-/* 176 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -21538,6 +21547,7 @@
 	
 	Tile.prototype.makeMove = function (color) {
 	  if (this.validMove(color)) {
+	    console.log("making move");
 	    this.owner = color;
 	
 	    this.enemies().forEach(function (tile) {
@@ -21563,7 +21573,7 @@
 	};
 	
 	Tile.prototype.update = function (visited) {
-	  debugger;
+	  // debugger;
 	  visited.add(this);
 	  if (this.neighbors().some(function (t) {
 	    return t.owner === null;
@@ -21579,6 +21589,52 @@
 	    });
 	  }
 	};
+	
+	module.exports = Tile;
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	
+	var Tile = React.createClass({
+	  displayName: 'Tile',
+	  render: function render() {
+	    var tile = this.props.tile;
+	    if (tile && !this.props.visited.has(tile)) {
+	      this.props.visited.add(tile);
+	      var style = {
+	        left: this.props.xPos * 3 - 1.45 + 'rem',
+	        bottom: this.props.yPos * 3 - 1.45 + 'rem'
+	      };
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement('div', {
+	          onClick: this.props.handleClick.bind(null, tile),
+	          className: tile.owner + ' tile',
+	          style: style }),
+	        React.createElement(Tile, {
+	          tile: tile.up,
+	          visited: this.props.visited,
+	          xPos: this.props.xPos,
+	          yPos: this.props.yPos + 1,
+	          handleClick: this.props.handleClick }),
+	        React.createElement(Tile, {
+	          tile: tile.right,
+	          visited: this.props.visited,
+	          xPos: this.props.xPos + 1,
+	          yPos: this.props.yPos,
+	          handleClick: this.props.handleClick })
+	      );
+	    } else {
+	      return null;
+	    }
+	  }
+	});
 	
 	module.exports = Tile;
 

@@ -1,0 +1,57 @@
+
+.board {
+  position: relative;
+  height: 40rem;
+  width: 40rem;
+  margin: auto;
+  box-sizing: border-box;
+  background-color: antiquewhite;
+  border: 2rem solid antiquewhite;
+  border-radius: 3px;
+  /*overflow: hidden;*/
+}
+
+.tile {
+  position: absolute;
+  background-image: url("./add.png");
+  background-size: cover;
+  /*background-color: antiquewhite;*/
+  width: 3rem;
+  height: 3rem;
+  /*border: 1px solid black;*/
+  box-sizing: border-box;
+}
+
+.tile.null:hover {
+  cursor: pointer;
+  opacity: 0.8;
+  border-radius: 1.5rem;
+}
+.board.black .tile.null:hover {
+  background-color: dimgrey;
+}
+.board.white .tile.null:hover {
+  background-color: whitesmoke;
+}
+
+.tile.white {
+  -webkit-box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.3);
+  box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.3);
+  width: 2.8rem;
+  height: 2.8rem;
+  margin: 0 0 0.1rem 0.1rem;
+  background: white;
+  border-radius: 1.5rem;
+}
+
+.tile.black {
+  -webkit-box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.3);
+  box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.3);
+  width: 2.8rem;
+  height: 2.8rem;
+  margin: 0 0 0.1rem 0.1rem;
+  background: black;
+  border-radius: 1.5rem;
+}
